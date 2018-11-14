@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/bottom_sheet"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="@dimen/default_large_margin"
+    android:background="@android:color/white"
+    android:orientation="vertical"
+    app:layout_behavior="android.support.design.widget.BottomSheetBehavior"
+    >
+
+    <Button
+        android:id="@+id/button_login"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/login"
+        android:textColor="@android:color/white"
+        android:drawableStart="@drawable/ic_account_circle_white_24dp"
+        android:background="@drawable/button_radius_primary_color"
+        android:layout_marginVertical="@dimen/default_margin"
+        android:layout_marginHorizontal="@dimen/default_large_margin"
+        android:padding="@dimen/default_margin"/>
+
+    <Button
+        android:id="@+id/button_reservations"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/default_large_margin"
+        android:layout_marginVertical="@dimen/default_margin"
+        android:background="@drawable/button_radius_accent_color"
+        android:drawableStart="@drawable/ic_book_white_24dp"
+        android:padding="@dimen/default_margin"
+        android:text="@string/reservations"
+        android:textColor="@android:color/white" />
+
+    <Button
+        android:id="@+id/button_email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/email_us"
+        android:textColor="@android:color/white"
+        android:drawableStart="@drawable/ic_email_white_24dp"
+        android:background="@drawable/button_radius_primary_dark_color"
+        android:layout_marginVertical="@dimen/default_margin"
+        android:layout_marginHorizontal="@dimen/default_large_margin"
+        android:padding="@dimen/default_margin"/>
+
+</LinearLayout>

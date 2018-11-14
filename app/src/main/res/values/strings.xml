@@ -1,0 +1,56 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name">UQAC &amp; Park</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="main_activity_description">Trouve ta place à l\'UQAC.</string>
+
+    <string name="facebook_application_id" translatable="false">249371862409530</string>
+    <string name="fb_login_protocol_scheme" translatable="false" tools:ignore="UnusedResources">fb249371862409530</string>
+
+
+    <string name="error_not_connected">Vous devez vous connecter !</string>
+    <string name="error_authentication_canceled">Authentification annulée&#8230;</string>
+    <string name="error_no_internet">Aucune connexion internet !</string>
+    <string name="error_unknown_error">Une erreur inconnue s\'est produite&#8230;</string>
+    <string name="connection_succeed">Authentification réussie !</string>
+    <string name="button_login_text_logged">Afficher le profil</string>
+    <string name="button_login_text_not_logged">Connexion</string>
+
+    <string name="toolbar_title_login_activity">Votre Profil</string>
+    <string name="text_input_username">Nom d\'utilisateur</string>
+    <string name="text_view_email">Adresse email :</string>
+    <string name="button_update_account">Mettre à jour le nom d\'utilisateur</string>
+    <string name="button_delete_account">Supprimer mon compte</string>
+    <string name="button_sign_out_account">Déconnexion</string>
+    <string name="info_no_email_found">Aucune adresse email</string>
+    <string name="info_no_username_found">Aucun nom d\'utilisateur</string>
+    <string name="popup_message_confirmation_delete_account">Es-tu sûr(e) de vouloir supprimer ton compte ?</string>
+    <string name="popup_message_choice_yes">Oui !</string>
+    <string name="popup_message_choice_no">Non</string>
+
+    <string name="toolbar_title_report_chat_activity">Reports d\'incident</string>
+    <string name="text_input_title_report_chat_activity">Composer votre message</string>
+    <string name="button_title_report_chat_activity">ENVOYER</string>
+    <string name="text_view_report_chat_error">Ce fil de discussion ne contient pour le moment aucun message&#8230;</string>
+    <string name="popup_title_permission_files_access">Cette application a besoin de permission pour fonctionner.</string>
+    <string name="toast_title_no_image_chosen">Aucune image choisie&#8230;</string>
+
+    <string name="login">Connexion</string>
+    <string name="logo">logo</string>
+    <string name="reserver">Réserver</string>
+    <string name="email_us">Nous contacter</string>
+    <string name="reservations">Mes réservations</string>
+    <string name="settings">parametres</string>
+
+    <string name="title_activity_maps" translatable="false">Map</string>
+    <string name="show_maps">Afficher la carte</string>
+
+    <!--    Permissions    -->
+    <string name="permission_rationale_location">Access to the location service is required to demonstrate the \'my location\' feature, which shows your current location on the map.</string>
+    <string name="location_permission_denied">This sample requires location permission to enable the \'my location\' layer. Please try again and grant access to use the location.\nIf the permission has been permanently denied, it can be enabled from the System Settings &gt; Apps &gt; \'Google Maps API Demos\'.</string>
+    <string name="permission_required_toast">Location permission is required for this demo.</string>
+    <string name="nav_item1">Mon compte</string>
+    <string name="nav_item2">Mes réservations</string>
+    <string name="nav_item3">Nous contacter</string>
+
+
+</resources>
