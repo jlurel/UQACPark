@@ -1,9 +1,11 @@
 package com.katsuo.uqacpark.profile;
 
 import android.content.DialogInterface;
-import android.support.design.widget.TextInputEditText;
-import android.support.v7.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.TextInputEditText;
+import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
@@ -15,15 +17,17 @@ import com.bumptech.glide.request.RequestOptions;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.katsuo.uqacpark.ImmatriculationActivity;
 import com.katsuo.uqacpark.R;
-import com.katsuo.uqacpark.dao.UserDAO;
 import com.katsuo.uqacpark.base.BaseActivity;
+import com.katsuo.uqacpark.dao.UserDAO;
 import com.katsuo.uqacpark.models.User;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 
-public class ProfileActivity extends BaseActivity {
+public class ProfileActivity extends BaseActivity
+        implements ActivityCompat.OnRequestPermissionsResultCallback {
 
     @BindView(R.id.profile_activity_imageview_profile)
     ImageView imageViewProfile;
@@ -76,6 +80,12 @@ public class ProfileActivity extends BaseActivity {
                 })
                 .setNegativeButton(R.string.popup_message_choice_no, null)
                 .show();
+    }
+
+    @OnClick(R.id.button_immatriculation)
+    public void onClickScanImmatriculationButton() {
+        Intent intent = new Intent(this, ImmatriculationActivity.class);
+        startActivity(intent);
     }
 
 

@@ -40,17 +40,30 @@
     <string name="email_us">Nous contacter</string>
     <string name="reservations">Mes réservations</string>
     <string name="settings">parametres</string>
+    <string name="scan_immatriculation">Scanner ma plaque d\'immatriculation</string>
 
     <string name="title_activity_maps" translatable="false">Map</string>
     <string name="show_maps">Afficher la carte</string>
 
     <!--    Permissions    -->
+    <string name="rationale_ask">This app may not work correctly without the requested permissions.</string>
+    <string name="rationale_ask_again">
+        This app may not work correctly without the requested permissions.
+        Open the app settings screen to modify app permissions.
+    </string>
     <string name="permission_rationale_location">Access to the location service is required to demonstrate the \'my location\' feature, which shows your current location on the map.</string>
     <string name="location_permission_denied">This sample requires location permission to enable the \'my location\' layer. Please try again and grant access to use the location.\nIf the permission has been permanently denied, it can be enabled from the System Settings &gt; Apps &gt; \'Google Maps API Demos\'.</string>
     <string name="permission_required_toast">Location permission is required for this demo.</string>
     <string name="nav_item1">Mon compte</string>
     <string name="nav_item2">Mes réservations</string>
     <string name="nav_item3">Nous contacter</string>
+
+    <string name="low_storage_error">Ocr dependencies cannot be downloaded due to low device storage</string>
+    <string name="take_picture">Prendre une photo</string>
+    <string name="scan">Scanner</string>
+    <string name="subject">Sujet :</string>
+    <string name="message">Message</string>
+    <string name="send">Envoyer</string>
 
 
 </resources>

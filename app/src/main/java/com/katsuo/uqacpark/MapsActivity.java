@@ -6,15 +6,13 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.location.Location;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.BottomSheetBehavior;
-import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -71,7 +69,7 @@ public class MapsActivity extends AppCompatActivity
     @BindView(R.id.main_activity_coordinator_layout)
     CoordinatorLayout coordinatorLayout;
     @BindView(R.id.fab)
-    FloatingActionButton floatingActionButton;
+    FloatingActionButton fabExpand;
     @BindView(R.id.fab_collapse)
     FloatingActionButton fabCollapse;
     @BindView(R.id.bottom_sheet)
@@ -135,12 +133,12 @@ public class MapsActivity extends AppCompatActivity
                                 .setDuration(0)
                                 .start();
 
-                        floatingActionButton.hide();
+                        fabExpand.hide();
                     }
                         break;
                     case BottomSheetBehavior.STATE_COLLAPSED: {
-                        floatingActionButton.show();
-                        floatingActionButton.animate()
+                        fabExpand.show();
+                        fabExpand.animate()
                                 .scaleX(1)
                                 .scaleY(1)
                                 .setDuration(0)
@@ -150,7 +148,7 @@ public class MapsActivity extends AppCompatActivity
                     }
                         break;
                     case BottomSheetBehavior.STATE_DRAGGING: {
-                        floatingActionButton.animate()
+                        fabExpand.animate()
                                 .scaleX(0)
                                 .scaleY(0)
                                 .setDuration(0)
@@ -172,7 +170,7 @@ public class MapsActivity extends AppCompatActivity
             }
         });
 
-        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+        fabExpand.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
@@ -397,7 +395,7 @@ public class MapsActivity extends AppCompatActivity
 
     @OnClick(R.id.button_email)
     public void onClickButtonEmail() {
-        Toast.makeText(getApplicationContext(), buttonEmail.getText(), Toast.LENGTH_SHORT).show();
+        startEmailActivity();
     }
 
     @Nullable
@@ -421,6 +419,11 @@ public class MapsActivity extends AppCompatActivity
 
     private void startProfileActivity(){
         Intent intent = new Intent(this, ProfileActivity.class);
+        startActivity(intent);
+    }
+
+    private void startEmailActivity() {
+        Intent intent = new Intent(this, EmailActivity.class);
         startActivity(intent);
     }
 
