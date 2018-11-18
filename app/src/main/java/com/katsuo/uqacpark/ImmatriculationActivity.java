@@ -43,6 +43,8 @@ public class ImmatriculationActivity extends BaseActivity
     private static final String TAG = ImmatriculationActivity.class.getSimpleName();
     private static final int REQUEST_IMAGE = 100;
     private static final int STORAGE = 2;
+    public static final String PLAQUE = "plaque";
+
     @BindView(R.id.image_view)
     ImageView imageView;
     @BindView(R.id.text_view_immatriculation)
@@ -105,6 +107,11 @@ public class ImmatriculationActivity extends BaseActivity
                                             + " Confidence: " + String.format("%.2f", results.getResults().get(0).getConfidence()) + "%"
                                             // Convert processing time to seconds and trim to two decimal places
                                             + " Processing time: " + String.format("%.2f", ((results.getProcessingTimeMs() / 1000.0) % 60)) + " seconds");
+
+                                    Intent intent = new Intent();
+                                    intent.putExtra(PLAQUE, results.getResults().get(0).getPlate());
+                                    setResult(Activity.RESULT_OK, intent);
+                                    finish();
                                 }
                             }
                         });
@@ -119,7 +126,6 @@ public class ImmatriculationActivity extends BaseActivity
                             }
                         });
                     }
-
                     progress.dismiss();
                 }
             });
@@ -136,8 +142,8 @@ public class ImmatriculationActivity extends BaseActivity
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
             // Permission to access the camera is missing.
-            PermissionUtils.requestPermission(this, STORAGE,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE, true);
+            PermissionUtils.requestPermission(this, REQUEST_IMAGE,
+                    Manifest.permission.CAMERA, true);
         }
         takePicture();
     }

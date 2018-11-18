@@ -64,6 +64,7 @@
     <string name="subject">Sujet :</string>
     <string name="message">Message</string>
     <string name="send">Envoyer</string>
+    <string name="license_plate">Plaque d\'immatriculation</string>
 
 
 </resources>

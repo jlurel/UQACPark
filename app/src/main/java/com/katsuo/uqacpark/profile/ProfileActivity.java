@@ -8,6 +8,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -41,6 +42,9 @@ public class ProfileActivity extends BaseActivity
     @BindView(R.id.profile_activity_progress_bar)
     ProgressBar progressBar;
 
+    @BindView(R.id.edit_text_immatriculation)
+    EditText editTextImmatriculation;
+
     //Identifiants Http Request
     private static final int SIGN_OUT_TASK = 10;
     private static final int DELETE_USER_TASK = 20;
@@ -51,6 +55,14 @@ public class ProfileActivity extends BaseActivity
         super.onCreate(savedInstanceState);
         this.configureToolbar();
         this.updateUIWhenCreating();
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1 && resultCode == RESULT_OK) {
+            final String plaque = data.getExtras().getString(ImmatriculationActivity.PLAQUE);
+            editTextImmatriculation.setText(plaque);
+        }
     }
 
     @Override
@@ -85,7 +97,7 @@ public class ProfileActivity extends BaseActivity
     @OnClick(R.id.button_immatriculation)
     public void onClickScanImmatriculationButton() {
         Intent intent = new Intent(this, ImmatriculationActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent, 1);
     }
 
 
