@@ -2,7 +2,6 @@ package com.katsuo.uqacpark.models;
 
 public class Spot {
     private String spotId;
-    private Parking parking;
     private double latitude;
     private double longitude;
     private boolean available;
@@ -10,9 +9,8 @@ public class Spot {
     public Spot() {
     }
 
-    public Spot(String spotId, Parking parking, double latitude, double longitude, boolean available) {
+    public Spot(String spotId, double latitude, double longitude, boolean available) {
         this.spotId = spotId;
-        this.parking = parking;
         this.latitude = latitude;
         this.longitude = longitude;
         this.available = available;
@@ -24,14 +22,6 @@ public class Spot {
 
     public void setSpotId(String spotId) {
         this.spotId = spotId;
-    }
-
-    public Parking getParking() {
-        return parking;
-    }
-
-    public void setParking(Parking parking) {
-        this.parking = parking;
     }
 
     public double getLatitude() {

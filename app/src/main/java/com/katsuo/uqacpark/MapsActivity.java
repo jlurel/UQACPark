@@ -250,6 +250,7 @@ public class MapsActivity extends AppCompatActivity
         mMap.moveCamera(CameraUpdateFactory.newLatLng(uqac));
         mMap.setMinZoomPreference(15);
         mMap.setMaxZoomPreference(20);
+//        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 
         addMarkersToMap(mMap);
 
@@ -364,7 +365,7 @@ public class MapsActivity extends AppCompatActivity
                             }
                             Circle circle = googleMap.addCircle(new CircleOptions()
                                     .center(latLng1)
-                                    .radius(0.5)
+                                    .radius(1.1)
                                     .strokeColor(color)
                                     .fillColor(color)
                                     .clickable(true));

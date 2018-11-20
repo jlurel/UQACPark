@@ -57,6 +57,7 @@ public class ImmatriculationActivity extends BaseActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ANDROID_DATA_DIR = this.getApplicationInfo().dataDir;
+        checkPermission();
     }
 
     @Override
@@ -144,8 +145,9 @@ public class ImmatriculationActivity extends BaseActivity
             // Permission to access the camera is missing.
             PermissionUtils.requestPermission(this, REQUEST_IMAGE,
                     Manifest.permission.CAMERA, true);
+        } else {
+            takePicture();
         }
-        takePicture();
     }
 
     @Override
@@ -160,8 +162,16 @@ public class ImmatriculationActivity extends BaseActivity
                     Toast.makeText(this, "Storage permission is needed to analyse the picture.", Toast.LENGTH_LONG).show();
                 }
             }
-
+            case REQUEST_IMAGE: {
+                if (PermissionUtils.isPermissionGranted(permissions, grantResults,
+                        Manifest.permission.CAMERA)) {
+                    takePicture();
+                } else {
+                    Toast.makeText(this, "Camera permission is needed to take the picture.", Toast.LENGTH_LONG).show();
+                }
+            }
             default:
+                finish();
                 break;
         }
     }
