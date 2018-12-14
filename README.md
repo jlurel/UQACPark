@@ -23,3 +23,6 @@ L’application utilise différentes ressources disponibles sur internet :
 ### Contributeurs
 * Joseph Lurel
 * Skander Farhat
+
+### Captures d'écran
+![MapsActivity](/images/mapactivity.png) ![Menu](/images/menu.png) ![Connexion](/images/signin.png) ![Profil](/images/profile.png)
