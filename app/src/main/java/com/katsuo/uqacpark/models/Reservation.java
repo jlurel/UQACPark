@@ -4,22 +4,23 @@ import java.util.Date;
 
 public class Reservation {
     private String reservationId;
+    private String date;
     private Date startDate;
     private Date endDate;
     private String status;
-    private User user;
-    private Spot spot;
+    private String user;
+    private String spotId;
 
     public Reservation() {
     }
 
-    public Reservation(String reservationId, Date startDate, Date endDate, String status, User user, Spot spot) {
+    public Reservation(String reservationId, String date, Date startDate, Date endDate, String status, String user, String spotId) {
         this.reservationId = reservationId;
         this.startDate = startDate;
         this.endDate = endDate;
         this.status = status;
         this.user = user;
-        this.spot = spot;
+        this.spotId = spotId;
     }
 
     public String getReservationId() {
@@ -28,6 +29,14 @@ public class Reservation {
 
     public void setReservationId(String reservationId) {
         this.reservationId = reservationId;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public Date getStartDate() {
@@ -54,19 +63,19 @@ public class Reservation {
         this.status = status;
     }
 
-    public User getUser() {
+    public String getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(String user) {
         this.user = user;
     }
 
-    public Spot getSpot() {
-        return spot;
+    public String getSpotId() {
+        return spotId;
     }
 
-    public void setSpot(Spot spot) {
-        this.spot = spot;
+    public void setSpotId(String spotId) {
+        this.spotId = spotId;
     }
 }

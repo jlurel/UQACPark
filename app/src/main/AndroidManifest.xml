@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
 
     <uses-feature
@@ -60,11 +61,11 @@
             android:name=".ImmatriculationActivity"
             android:parentActivityName=".profile.ProfileActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".EmailActivity"
             android:parentActivityName=".MapsActivity"
             android:screenOrientation="portrait" />
+        <activity android:name="com.paypal.android.sdk.payments.PaymentActivity" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -76,7 +77,16 @@
                 android:resource="@xml/filepaths" />
         </provider>
 
+        <service
+            android:name="com.paypal.android.sdk.payments.PayPalService"
+            android:exported="false" />
 
+        <activity
+            android:name=".ReservationActivity"
+            android:label="@string/title_activity_reservation"
+            android:parentActivityName=".MapsActivity"
+            android:screenOrientation="portrait"
+            />
     </application>
 
 </manifest>

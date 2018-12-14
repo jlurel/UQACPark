@@ -49,14 +49,16 @@ public class ImmatriculationActivity extends BaseActivity
     ImageView imageView;
     @BindView(R.id.text_view_immatriculation)
     TextView textViewImmatriculation;
-    private File destination;
+    private static File destination;
 
     private String ANDROID_DATA_DIR;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ANDROID_DATA_DIR = this.getApplicationInfo().dataDir;
+
         checkPermission();
     }
 
@@ -75,9 +77,17 @@ public class ImmatriculationActivity extends BaseActivity
     }
 
     @Override
+    public void onDestroy(){
+        super.onDestroy();
+        if ( progressDialog!=null && progressDialog.isShowing() ){
+            progressDialog.cancel();
+        }
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE && resultCode == Activity.RESULT_OK) {
-            final ProgressDialog progress = ProgressDialog.show(this, "Loading", "Parsing result...", true);
+            progressDialog = ProgressDialog.show(this, "Loading", "Parsing result...", true);
             final String openAlprConfFile = ANDROID_DATA_DIR + File.separatorChar + "runtime_data" + File.separatorChar + "openalpr.conf";
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inSampleSize = 10;
@@ -90,7 +100,9 @@ public class ImmatriculationActivity extends BaseActivity
             AsyncTask.execute(new Runnable() {
                 @Override
                 public void run() {
-                    String result = OpenALPR.Factory.create(ImmatriculationActivity.this, ANDROID_DATA_DIR).recognizeWithCountryRegionNConfig("us", "", destination.getAbsolutePath(), openAlprConfFile, 10);
+
+                    String result = OpenALPR.Factory.create(ImmatriculationActivity.this, ANDROID_DATA_DIR)
+                            .recognizeWithCountryRegionNConfig("us", "", destination.getAbsolutePath(), openAlprConfFile, 10);
 
                     Log.d("OPEN ALPR", result);
 
@@ -127,7 +139,7 @@ public class ImmatriculationActivity extends BaseActivity
                             }
                         });
                     }
-                    progress.dismiss();
+                    progressDialog.dismiss();
                 }
             });
         }

@@ -49,6 +49,7 @@ public class ProfileActivity extends BaseActivity
     private static final int SIGN_OUT_TASK = 10;
     private static final int DELETE_USER_TASK = 20;
     private static final int UPDATE_USERNAME = 30;
+    private static final int UPDATE_LICENSE = 40;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +74,7 @@ public class ProfileActivity extends BaseActivity
     @OnClick(R.id.profile_activity_button_update)
     public void onClickUpdateButton() {
         this.updateUsernameInFirebase();
+        this.updateLicensePlateInFirebase();
     }
 
     @OnClick(R.id.profile_activity_button_sign_out)
@@ -98,6 +100,7 @@ public class ProfileActivity extends BaseActivity
     public void onClickScanImmatriculationButton() {
         Intent intent = new Intent(this, ImmatriculationActivity.class);
         startActivityForResult(intent, 1);
+
     }
 
 
@@ -125,6 +128,10 @@ public class ProfileActivity extends BaseActivity
                     String username = TextUtils.isEmpty(currentUser.getUsername()) ?
                             getString(R.string.info_no_username_found) : currentUser.getUsername();
                     textInputEditTextUsername.setText(username);
+
+                    String licensePlate = TextUtils.isEmpty(currentUser.getLicensePlate()) ?
+                            getString(R.string.info_no_license_plate_found) : currentUser.getLicensePlate();
+                    editTextImmatriculation.setText(licensePlate);
                 }
             });
         }
@@ -139,8 +146,24 @@ public class ProfileActivity extends BaseActivity
         if (this.getCurrentUser() != null){
             if (!username.isEmpty() &&  !username.equals(getString(R.string.info_no_username_found))){
                 UserDAO.updateUsername(username, this.getCurrentUser().getUid())
-                        .addOnFailureListener(this.onFailureListener()).addOnSuccessListener(
+                        .addOnFailureListener(this.onFailureListener())
+                        .addOnSuccessListener(
                                 this.updateUIAfterRESTRequestsCompleted(UPDATE_USERNAME)
+                        );
+            }
+        }
+    }
+
+    private void updateLicensePlateInFirebase() {
+        this.progressBar.setVisibility(View.VISIBLE);
+        String licensePlate = this.editTextImmatriculation.getText().toString();
+
+        if (this.getCurrentUser() != null) {
+            if(!licensePlate.isEmpty() && !licensePlate.equals(getString(R.string.info_no_license_plate_found))){
+                UserDAO.updateLicensePlate(this.getCurrentUser().getUid(), licensePlate)
+                        .addOnFailureListener(this.onFailureListener())
+                        .addOnSuccessListener(
+                                this.updateUIAfterRESTRequestsCompleted(UPDATE_LICENSE)
                         );
             }
         }
@@ -175,6 +198,9 @@ public class ProfileActivity extends BaseActivity
                         finish();
                         break;
                     case UPDATE_USERNAME:
+                        progressBar.setVisibility(View.INVISIBLE);
+                        break;
+                    case UPDATE_LICENSE:
                         progressBar.setVisibility(View.INVISIBLE);
                         break;
                     default:

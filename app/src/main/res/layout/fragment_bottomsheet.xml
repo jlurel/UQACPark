@@ -36,6 +36,18 @@
         android:textColor="@android:color/white" />
 
     <Button
+        android:id="@+id/button_Payment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/payment"
+        android:textColor="@android:color/white"
+        android:drawableStart="@drawable/ic_email_white_24dp"
+        android:background="@drawable/button_radius_primary_dark_color"
+        android:layout_marginVertical="@dimen/default_margin"
+        android:layout_marginHorizontal="@dimen/default_large_margin"
+        android:padding="@dimen/default_margin"/>
+
+    <Button
         android:id="@+id/button_email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

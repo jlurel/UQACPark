@@ -18,7 +18,7 @@
     <string name="toolbar_title_login_activity">Votre Profil</string>
     <string name="text_input_username">Nom d\'utilisateur</string>
     <string name="text_view_email">Adresse email :</string>
-    <string name="button_update_account">Mettre à jour le nom d\'utilisateur</string>
+    <string name="button_update_account">Mettre à jour mon profil</string>
     <string name="button_delete_account">Supprimer mon compte</string>
     <string name="button_sign_out_account">Déconnexion</string>
     <string name="info_no_email_found">Aucune adresse email</string>
@@ -65,6 +65,16 @@
     <string name="message">Message</string>
     <string name="send">Envoyer</string>
     <string name="license_plate">Plaque d\'immatriculation</string>
+    <string name="payment">Paiement</string>
+    <string name="info_no_license_plate_found">Aucune plaque d\'immatriculation</string>
+    <string name="ratio_spots_available"> places disponibles /</string>
+    <string name="title_activity_reservation">Réservation</string>
+    <string name="edit_reservation_start_date">Selectionner l\'heure de début...</string>
+    <string name="edit_reservation_end_date">Sélectionner l\'heure de fin...</string>
+    <string name="reservation_start_date">Heure de début</string>
+    <string name="reservation_end_date">Heure de fin</string>
+    <string name="edit_reservation_date">Entrer une heure</string>
+    <string name="reservation_duration">Durée de la réservation : </string>
 
 
 </resources>

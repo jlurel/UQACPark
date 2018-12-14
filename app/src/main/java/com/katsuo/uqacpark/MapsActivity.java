@@ -16,10 +16,12 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
@@ -43,13 +45,21 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.katsuo.uqacpark.dao.ParkingDAO;
+import com.katsuo.uqacpark.dao.ReservationDAO;
 import com.katsuo.uqacpark.dao.SpotDAO;
 import com.katsuo.uqacpark.dao.UserDAO;
 import com.katsuo.uqacpark.models.Parking;
+import com.katsuo.uqacpark.models.Reservation;
 import com.katsuo.uqacpark.models.Spot;
 import com.katsuo.uqacpark.profile.ProfileActivity;
+import com.paypal.android.sdk.payments.PayPalConfiguration;
+import com.paypal.android.sdk.payments.PayPalPayment;
+import com.paypal.android.sdk.payments.PayPalService;
+import com.paypal.android.sdk.payments.PaymentActivity;
 
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -98,7 +108,7 @@ public class MapsActivity extends AppCompatActivity
     private GoogleMap mMap;
     private boolean mPermissionDenied = false;
     private int color = Color.GREEN;
-    private Map<String, Spot> mMarkerMap = new HashMap<>();
+    private Map<String, Spot> mSpotMap = new HashMap<>();
 
 
     @Override
@@ -135,7 +145,7 @@ public class MapsActivity extends AppCompatActivity
 
                         fabExpand.hide();
                     }
-                        break;
+                    break;
                     case BottomSheetBehavior.STATE_COLLAPSED: {
                         fabExpand.show();
                         fabExpand.animate()
@@ -146,7 +156,7 @@ public class MapsActivity extends AppCompatActivity
                         fabCollapse.hide();
 
                     }
-                        break;
+                    break;
                     case BottomSheetBehavior.STATE_DRAGGING: {
                         fabExpand.animate()
                                 .scaleX(0)
@@ -159,7 +169,7 @@ public class MapsActivity extends AppCompatActivity
                                 .setDuration(0)
                                 .start();
                     }
-                        break;
+                    break;
                     case BottomSheetBehavior.STATE_SETTLING:
                         break;
                 }
@@ -253,12 +263,13 @@ public class MapsActivity extends AppCompatActivity
 //        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 
         addMarkersToMap(mMap);
+        showReservationOnMap(mMap);
 
         mMap.setOnCircleClickListener(new GoogleMap.OnCircleClickListener() {
             @Override
             public void onCircleClick(Circle circle) {
-                Spot spot = mMarkerMap.get(circle.getId());
-                Toast.makeText(getApplicationContext(), Double.toString(spot.getLatitude()), Toast.LENGTH_SHORT).show();
+                Spot spot = mSpotMap.get(circle.getId());
+                Toast.makeText(getApplicationContext(), Double.toString(spot.getLatitude()) + "," + Double.toString(spot.getLongitude()), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -321,32 +332,7 @@ public class MapsActivity extends AppCompatActivity
     }
 
     private void addMarkersToMap(final GoogleMap googleMap) {
-        ParkingDAO.getParkingCollection().addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots,
-                                @Nullable FirebaseFirestoreException e) {
-                if (e != null) {
-                    Log.w(TAG, "Listen failed.", e);
-                    return;
-                }
-                for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                        Parking parking = document.toObject(Parking.class);
-                        final LatLng latLng = new LatLng(parking.getLatitude(), parking.getLongitude());
-                        String name = parking.getName();
-                        googleMap.addMarker(new MarkerOptions()
-                                .position(latLng)
-                                .title(name)
-                                .snippet(String.valueOf(parking.getNbSpotsAvailable()))
-                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking)));
-
-                        addSpotsToMap(googleMap, parking.getParkingId());
-                }
-            }
-        });
-    }
-
-    private void addSpotsToMap(final GoogleMap googleMap, String parkingId) {
-        SpotDAO.getAllSpotsForParking(parkingId)
+        ParkingDAO.getParkingCollection()
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots,
@@ -356,23 +342,107 @@ public class MapsActivity extends AppCompatActivity
                             return;
                         }
                         for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                            Spot spot = document.toObject(Spot.class);
-                            LatLng latLng1 = new LatLng(spot.getLatitude(), spot.getLongitude());
-                            if (!spot.isAvailable()) {
-                                color = Color.RED;
-                            } else {
-                                color = Color.GREEN;
-                            }
-                            Circle circle = googleMap.addCircle(new CircleOptions()
-                                    .center(latLng1)
-                                    .radius(1.1)
-                                    .strokeColor(color)
-                                    .fillColor(color)
-                                    .clickable(true));
-                            mMarkerMap.put(circle.getId(), spot);
+                            Parking parking = document.toObject(Parking.class);
+                            final LatLng latLng = new LatLng(parking.getLatitude(), parking.getLongitude());
+                            String name = parking.getName();
+                            int nbSpotsAvailable = parking.getNbSpotsAvailable();
+                            int nbSpotsTotal = parking.getNbSpotsTotal();
+                            googleMap.addMarker(new MarkerOptions()
+                                    .position(latLng)
+                                    .title(name)
+                                    .snippet(nbSpotsAvailable + " " + getString(R.string.ratio_spots_available) + nbSpotsTotal)
+                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_parking)));
+
+                            addSpotsToMap(googleMap, parking.getParkingId());
                         }
                     }
                 });
+    }
+
+    private void addSpotsToMap(final GoogleMap googleMap, final String parkingId) {
+        SpotDAO.getAllSpotsForParking(parkingId)
+            .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                @Override
+                public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots,
+                                    @Nullable FirebaseFirestoreException e) {
+                    if (e != null) {
+                        Log.w(TAG, "Listen failed.", e);
+                        return;
+                    }
+                    int nbSpotsAvailable = 0;
+                    int nbSpotsTotal = 0;
+                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        Spot spot = document.toObject(Spot.class);
+                        LatLng latLng1 = new LatLng(spot.getLatitude(), spot.getLongitude());
+                        if (!spot.isAvailable()) {
+                            color = Color.RED;
+                            nbSpotsTotal += 1;
+                        } else {
+                            color = Color.GREEN;
+                            nbSpotsTotal += 1;
+                            nbSpotsAvailable += 1;
+                        }
+
+                        Circle circle = googleMap.addCircle(new CircleOptions()
+                                .center(latLng1)
+                                .radius(1.1)
+                                .strokeColor(color)
+                                .fillColor(color)
+                                .clickable(true));
+                        mSpotMap.put(circle.getId(), spot);
+                    }
+                    ParkingDAO.updateNbSpotsAvailable(parkingId, nbSpotsAvailable);
+                    ParkingDAO.updateNbSpotsTotal(parkingId, nbSpotsTotal);
+                }
+            });
+    }
+
+    private void showReservationOnMap(final GoogleMap googleMap) {
+        if (!isCurrentUserLogged()) {
+            return;
+        }
+        Calendar calendar = Calendar.getInstance();
+        Date today = calendar.getTime();
+        String todayToString = DateFormat.format("dd/MM/yyyy", today).toString();
+        ReservationDAO.getNextReservationForUser(this.getCurrentUser().getUid(), todayToString).addSnapshotListener(
+                new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots,
+                                        @Nullable FirebaseFirestoreException e) {
+                        if (e != null) {
+                            Log.w(TAG, "Listen failed.", e);
+                            return;
+                        }
+                        if (queryDocumentSnapshots.getDocuments().size() == 0) {
+                            return;
+                        }
+                        Reservation reservation = queryDocumentSnapshots
+                                .getDocuments().get(0).toObject(Reservation.class);
+                        String spotId = reservation.getSpotId();
+                        String parkingId = "XjCkiiACt3GLnNlEjRds";
+                        SpotDAO.getSpot(parkingId, spotId).addSnapshotListener(new EventListener<QuerySnapshot>() {
+                            @Override
+                            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots,
+                                                @Nullable FirebaseFirestoreException e) {
+                                if (e != null) {
+                                    Log.w(TAG, "Listen failed.", e);
+                                    return;
+                                }
+                                if (queryDocumentSnapshots.getDocuments().size() == 0) {
+                                    return;
+                                }
+                                Spot spot = queryDocumentSnapshots
+                                        .getDocuments().get(0).toObject(Spot.class);
+                                LatLng latLng = new LatLng(spot.getLatitude(), spot.getLongitude());
+                                googleMap.addMarker(new MarkerOptions()
+                                        .position(latLng)
+                                        .title("Ma place réservée"));
+                            }
+                        });
+                    }
+                }
+        );
+
     }
 
     private void updateUIWhenResuming(){
@@ -391,7 +461,12 @@ public class MapsActivity extends AppCompatActivity
 
     @OnClick(R.id.button_reservations)
     public void onClickButtonReservations() {
-        Toast.makeText(getApplicationContext(), buttonReservations.getText(), Toast.LENGTH_SHORT).show();
+        this.startReservationActivity();
+    }
+
+    @OnClick(R.id.button_Payment)
+    public void onClickButtonPayment() {
+        Paiement();
     }
 
     @OnClick(R.id.button_email)
@@ -423,8 +498,42 @@ public class MapsActivity extends AppCompatActivity
         startActivity(intent);
     }
 
+    private void Paiement(){
+        TextView m_response;
+
+        PayPalConfiguration m_configuration;
+        String m_paypalClientId="AcWNG1uTnKBgeex8lr8sT6eOmGKI19xGCHcflJiTlG04FvDPN46Wd89ci_hiy3f6DlWf3P8v-9HI__cB";
+        Intent m_service;
+        int m_paypalrequestcode = 999;
+
+        m_configuration = new PayPalConfiguration().environment(PayPalConfiguration.ENVIRONMENT_SANDBOX)
+                .clientId(m_paypalClientId);
+
+        m_service=new Intent(this, PayPalService.class);
+        m_service.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, m_configuration);
+        startService(m_service);
+
+        PayPalPayment payment = new PayPalPayment(new
+                java.math.BigDecimal(103),"CAD", "Test payment with paypal",
+                PayPalPayment.PAYMENT_INTENT_SALE);
+        startPaiementActivity(m_configuration,m_paypalrequestcode,payment );
+
+    }
+
+    private void startPaiementActivity(PayPalConfiguration m_configuration,int m_paypalrequestcode,PayPalPayment pay ){
+        Intent intent = new Intent(this,PaymentActivity.class);
+        intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION,m_configuration);
+        intent.putExtra(PaymentActivity.EXTRA_PAYMENT, pay);
+        startActivity(intent);
+    }
+
     private void startEmailActivity() {
         Intent intent = new Intent(this, EmailActivity.class);
+        startActivity(intent);
+    }
+
+    private void startReservationActivity() {
+        Intent intent = new Intent(this, ReservationActivity.class);
         startActivity(intent);
     }
 
@@ -440,7 +549,7 @@ public class MapsActivity extends AppCompatActivity
             String username = this.getCurrentUser().getDisplayName();
             String userId = this.getCurrentUser().getUid();
 
-            UserDAO.createUser(userId, username, urlPicture).addOnFailureListener(this.onFailureListener());
+            UserDAO.createUser(userId, username, urlPicture, null).addOnFailureListener(this.onFailureListener());
         }
     }
 

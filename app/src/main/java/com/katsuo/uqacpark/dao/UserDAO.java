@@ -17,8 +17,8 @@ public class UserDAO {
 
     // --- CREATE ---
 
-    public static Task<Void> createUser(String userId, String username, String urlPicture) {
-        User userToCreate = new User(userId, username, urlPicture);
+    public static Task<Void> createUser(String userId, String username, String urlPicture, String licensePlate) {
+        User userToCreate = new User(userId, username, urlPicture, licensePlate);
         return UserDAO.getUsersCollection().document(userId).set(userToCreate);
     }
 
@@ -36,6 +36,10 @@ public class UserDAO {
 
     public static Task<Void> updateIsAdmin(String userId, Boolean isAdmin) {
         return UserDAO.getUsersCollection().document(userId).update("isAdmin", isAdmin);
+    }
+
+    public static Task<Void> updateLicensePlate(String userId, String licensePlate) {
+        return UserDAO.getUsersCollection().document(userId).update("licensePlate", licensePlate);
     }
 
     // --- DELETE ---

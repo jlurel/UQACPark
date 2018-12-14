@@ -4,16 +4,18 @@ public class Parking {
     private String parkingId;
     private String name;
     private int nbSpotsAvailable;
+    private int nbSpotsTotal;
     private double latitude;
     private double longitude;
 
     public Parking() {
     }
 
-    public Parking(String parkingId, String name, int nbSpotsAvailable, double latitude, double longitude) {
+    public Parking(String parkingId, String name, int nbSpotsAvailable, int nbSpotsTotal, double latitude, double longitude) {
         this.parkingId = parkingId;
         this.name = name;
         this.nbSpotsAvailable = nbSpotsAvailable;
+        this.nbSpotsTotal = nbSpotsTotal;
         this.latitude = latitude;
         this.longitude = longitude;
     }
@@ -40,6 +42,12 @@ public class Parking {
 
     public void setNbSpotsAvailable(int nbSpotsAvailable) {
         this.nbSpotsAvailable = nbSpotsAvailable;
+    }
+
+    public int getNbSpotsTotal() { return nbSpotsTotal; }
+
+    public void setNbSpotsTotal(int nbSpotsTotal) {
+        this.nbSpotsTotal = nbSpotsTotal;
     }
 
     public double getLatitude() {
