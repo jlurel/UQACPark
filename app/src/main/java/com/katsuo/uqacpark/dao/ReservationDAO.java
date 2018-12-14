@@ -24,20 +24,20 @@ public class ReservationDAO {
 
     public static Query getNextReservationForUser(String userId, String date) {
         return ReservationDAO.getReservationCollection().whereEqualTo("user", userId)
-                .orderBy("startDate", Query.Direction.DESCENDING)
+                .orderBy("startHour", Query.Direction.DESCENDING)
                 .whereEqualTo("date", date).limit(1);
     }
 
-    public static Task<QuerySnapshot> getAllReservationsForDate(Date startDate, Date endDate) {
+    public static Query getAllReservationsForDate(String date, String startHour, String endHour) {
         return ReservationDAO.getReservationCollection()
-                .whereGreaterThanOrEqualTo("startDate", startDate)
-                .whereLessThanOrEqualTo("endDate", endDate)
-                .get();
+                .whereEqualTo("date", date)
+                .whereGreaterThanOrEqualTo("startHour", startHour)
+                .whereLessThanOrEqualTo("endHour", endHour);
     }
 
     public static Task<Void> createReservation(String reservationId, String userId, String spotId,
-                                        String date, Date startDate, Date endDate, String status) {
-        Reservation reservation = new Reservation(reservationId, date, startDate, endDate, status, userId, spotId);
+                                        String date, String startHour, String endHour, String status) {
+        Reservation reservation = new Reservation(reservationId, date, startHour, endHour, status, userId, spotId);
         return ReservationDAO.getReservationCollection().document(reservationId).set(reservation);
     }
 

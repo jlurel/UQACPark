@@ -102,39 +102,39 @@ public class ReservationActivity extends BaseActivity {
     @OnClick(R.id.edit_reservation_start_date)
     public void onClickEditReservationStartDate() {
         timePickerDialog = new TimePickerDialog(ReservationActivity.this, android.R.style.Theme_Holo_Light_Dialog,
-            new TimePickerDialog.OnTimeSetListener() {
-                @Override
-                public void onTimeSet(TimePicker timePicker, int hourOfDay, int minutes) {
-                    int validTime = validateStartDate(hourOfDay, minutes);
-                    switch (validTime) {
-                        case 0 :
-                            editTextReservationStartDate.setText(String.format("%02d:%02d", hourOfDay, minutes));
-                            break;
-                        case 1 :
-                            timePickerDialog.updateTime(currentHour, mMinStartMinute);
-                            editTextReservationStartDate.setText(String.format("%02d:%02d", mMinStartHour, currentMinute));
-                            Snackbar snackbar1 = Snackbar
-                                    .make(coordinatorLayout,
-                                            "Vous ne pouvez réserver une place qu'entre 30 min et 1 heure à l'avance !",
-                                            Snackbar.LENGTH_LONG);
-                            snackbar1.setActionTextColor(Color.RED);
-                            snackbar1.show();
-                            break;
-                        case 2 :
-                            timePickerDialog.updateTime(currentHour, mMinStartMinute);
-                            editTextReservationStartDate.setText(String.format("%02d:%02d", mMinStartHour, currentMinute));
-                            Snackbar snackbar2 = Snackbar
-                                    .make(coordinatorLayout,
-                                            "Vous ne pouvez réserver une place qu'entre 7h et 22h !",
-                                            Snackbar.LENGTH_LONG);
-                            snackbar2.setActionTextColor(Color.RED);
-                            snackbar2.show();
-                            break;
-                        default :
-                            break;
+                new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker timePicker, int hourOfDay, int minutes) {
+                        int validTime = validateStartDate(hourOfDay, minutes);
+                        switch (validTime) {
+                            case 0 :
+                                editTextReservationStartDate.setText(String.format("%02d:%02d", hourOfDay, minutes));
+                                break;
+                            case 1 :
+                                timePickerDialog.updateTime(currentHour, mMinStartMinute);
+                                editTextReservationStartDate.setText(String.format("%02d:%02d", mMinStartHour, currentMinute));
+                                Snackbar snackbar1 = Snackbar
+                                        .make(coordinatorLayout,
+                                                "Vous ne pouvez réserver une place qu'entre 30 min et 1 heure à l'avance !",
+                                                Snackbar.LENGTH_LONG);
+                                snackbar1.setActionTextColor(Color.RED);
+                                snackbar1.show();
+                                break;
+                            case 2 :
+                                timePickerDialog.updateTime(currentHour, mMinStartMinute);
+                                editTextReservationStartDate.setText(String.format("%02d:%02d", mMinStartHour, currentMinute));
+                                Snackbar snackbar2 = Snackbar
+                                        .make(coordinatorLayout,
+                                                "Vous ne pouvez réserver une place qu'entre 7h et 22h !",
+                                                Snackbar.LENGTH_LONG);
+                                snackbar2.setActionTextColor(Color.RED);
+                                snackbar2.show();
+                                break;
+                            default :
+                                break;
+                        }
                     }
-                }
-            }, currentHour, mMinStartMinute, true);
+                }, currentHour, mMinStartMinute, true);
         timePickerDialog.show();
     }
 
@@ -142,39 +142,39 @@ public class ReservationActivity extends BaseActivity {
     @OnClick(R.id.edit_reservation_end_date)
     public void onClickEditReservationEndDate() {
         timePickerDialog = new TimePickerDialog(ReservationActivity.this, android.R.style.Theme_Holo_Light_Dialog,
-            new TimePickerDialog.OnTimeSetListener() {
-                @Override
-                public void onTimeSet(final TimePicker timePicker, int hourOfDay, int minutes) {
-                    boolean validTime = validateEndDate(editTextReservationStartDate.getText().toString(),
-                            String.format("%02d:%02d", hourOfDay, minutes));
-                    if (validTime) {
-                        timePicker.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
-                            @Override
-                            public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
-                                if (hourOfDay < 7) {
-                                    view.setHour(7);
+                new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(final TimePicker timePicker, int hourOfDay, int minutes) {
+                        boolean validTime = validateEndDate(editTextReservationStartDate.getText().toString(),
+                                String.format("%02d:%02d", hourOfDay, minutes));
+                        if (validTime) {
+                            timePicker.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
+                                @Override
+                                public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
+                                    if (hourOfDay < 7) {
+                                        view.setHour(7);
+                                    }
+                                    else if (hourOfDay > 22) {
+                                        view.setHour(22);
+                                    }
                                 }
-                                else if (hourOfDay > 22) {
-                                    view.setHour(22);
-                                }
-                            }
-                        });
-                        editTextReservationEndDate.setText(String.format("%02d:%02d", hourOfDay, minutes));
-                        String dureeReservation = calculerDureeReservation(
-                                editTextReservationStartDate.getText().toString(),
-                                String.format("%02d:%02d", hourOfDay, minutes)
-                                );
-                        textViewDureeReservation.setText(String.valueOf(dureeReservation));
-                    } else {
-                        Snackbar snackbar = Snackbar
-                                .make(coordinatorLayout,
-                                        "L'horaire sélectionnée n'est pas valide !",
-                                        Snackbar.LENGTH_LONG);
-                        snackbar.setActionTextColor(Color.RED);
-                        snackbar.show();
+                            });
+                            editTextReservationEndDate.setText(String.format("%02d:%02d", hourOfDay, minutes));
+                            String dureeReservation = calculerDureeReservation(
+                                    editTextReservationStartDate.getText().toString(),
+                                    String.format("%02d:%02d", hourOfDay, minutes)
+                            );
+                            textViewDureeReservation.setText(String.valueOf(dureeReservation));
+                        } else {
+                            Snackbar snackbar = Snackbar
+                                    .make(coordinatorLayout,
+                                            "L'horaire sélectionnée n'est pas valide !",
+                                            Snackbar.LENGTH_LONG);
+                            snackbar.setActionTextColor(Color.RED);
+                            snackbar.show();
+                        }
                     }
-                }
-            }, mMinStartHour + 1, mMinStartMinute, true);
+                }, mMinStartHour + 1, mMinStartMinute, true);
         timePickerDialog.show();
     }
 
@@ -235,49 +235,40 @@ public class ReservationActivity extends BaseActivity {
     public void reserverSpot() {
         ParkingDAO.getParkingByName("Parking Ouest")
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                List<String> parkings = new ArrayList<>();
-                for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                    parkings.add(documentSnapshot.getId());
-                }
-                Log.d(TAG, parkings.toString());
-                String parking = parkings.get(0);
-
-                SpotDAO.getAllAvailableSpotsForParking(parking)
-                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()) {
-                                Spot spot = task.getResult().getDocuments().get(0).toObject(Spot.class);
-                                Long currentTime = System.currentTimeMillis() / 1000;
-                                String timestamp = currentTime.toString();
-                                String userId = getCurrentUser().getUid();
-                                String reservationId = userId + timestamp;
-                                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
-                                String today = simpleDateFormat.format(currentDay);
-                                String startHour = editTextReservationStartDate.getText().toString();
-                                String endHour = editTextReservationEndDate.getText().toString();
-                                try {
-                                    simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-                                    Date startDate = simpleDateFormat.parse(today + " " +
-                                            startHour);
-                                    Date endDate = simpleDateFormat.parse(today + " " +
-                                            endHour);
-                                    ReservationDAO.createReservation(reservationId, userId, spot.getSpotId(),
-                                            today, startDate, endDate, "en cours");
-                                } catch (ParseException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                            else {
-                                Log.d(TAG, "Error getting documents: ", task.getException());
-                            }
-
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        List<String> parkings = new ArrayList<>();
+                        for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                            parkings.add(documentSnapshot.getId());
                         }
-                    });
-            }
-        });
+                        Log.d(TAG, parkings.toString());
+                        String parking = parkings.get(0);
+
+                        SpotDAO.getAllAvailableSpotsForParking(parking)
+                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        Spot spot = task.getResult().getDocuments().get(0).toObject(Spot.class);
+                                        Long currentTime = System.currentTimeMillis() / 1000;
+                                        String timestamp = currentTime.toString();
+                                        String userId = getCurrentUser().getUid();
+                                        String reservationId = userId + timestamp;
+                                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                                        String today = simpleDateFormat.format(currentDay);
+                                        String startHour = editTextReservationStartDate.getText().toString();
+                                        String endHour = editTextReservationEndDate.getText().toString();
+                                        ReservationDAO.createReservation(reservationId, userId, spot.getSpotId(),
+                                                today, startHour, endHour, "en cours");
+                                    }
+                                    else {
+                                        Log.d(TAG, "Error getting documents: ", task.getException());
+                                    }
+
+                                }
+                            });
+                    }
+                });
     }
 
 }

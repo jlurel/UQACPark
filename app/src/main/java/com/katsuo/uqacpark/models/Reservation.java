@@ -5,8 +5,8 @@ import java.util.Date;
 public class Reservation {
     private String reservationId;
     private String date;
-    private Date startDate;
-    private Date endDate;
+    private String startHour;
+    private String endHour;
     private String status;
     private String user;
     private String spotId;
@@ -14,10 +14,12 @@ public class Reservation {
     public Reservation() {
     }
 
-    public Reservation(String reservationId, String date, Date startDate, Date endDate, String status, String user, String spotId) {
+    public Reservation(String reservationId, String date, String startHour, String endHour,
+                       String status, String user, String spotId) {
         this.reservationId = reservationId;
-        this.startDate = startDate;
-        this.endDate = endDate;
+        this.date = date;
+        this.startHour = startHour;
+        this.endHour = endHour;
         this.status = status;
         this.user = user;
         this.spotId = spotId;
@@ -39,20 +41,20 @@ public class Reservation {
         this.date = date;
     }
 
-    public Date getStartDate() {
-        return startDate;
+    public String getStartHour() {
+        return startHour;
     }
 
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
+    public void setStartHour(String startHour) {
+        this.startHour = startHour;
     }
 
-    public Date getEndDate() {
-        return endDate;
+    public String getEndHour() {
+        return endHour;
     }
 
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
+    public void setEndHour(String endHour) {
+        this.endHour = endHour;
     }
 
     public String getStatus() {
