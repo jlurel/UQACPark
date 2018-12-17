@@ -5,6 +5,7 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.katsuo.uqacpark.models.Reservation;
 
@@ -19,6 +20,7 @@ public class ReservationDAO {
 
     public static Query getAllReservationsForUser(String userId) {
         return ReservationDAO.getReservationCollection().whereEqualTo("user", userId)
+                .orderBy("date", Query.Direction.DESCENDING)
                 .limit(20);
     }
 
@@ -28,11 +30,9 @@ public class ReservationDAO {
                 .whereEqualTo("date", date).limit(1);
     }
 
-    public static Query getAllReservationsForDate(String date, String startHour, String endHour) {
+    public static Query getAllReservationsForDate(String date) {
         return ReservationDAO.getReservationCollection()
-                .whereEqualTo("date", date)
-                .whereGreaterThanOrEqualTo("startHour", startHour)
-                .whereLessThanOrEqualTo("endHour", endHour);
+                .whereEqualTo("date", date);
     }
 
     public static Task<Void> createReservation(String reservationId, String userId, String spotId,

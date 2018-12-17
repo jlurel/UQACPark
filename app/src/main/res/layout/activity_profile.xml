@@ -97,12 +97,6 @@
                 android:inputType="text" />
 
         </LinearLayout>
-        <Button
-            android:id="@+id/button_immatriculation"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/scan_immatriculation" />
-
 
     </LinearLayout>
 
@@ -113,6 +107,18 @@
         android:layout_weight="3"
         android:gravity="bottom"
         android:orientation="vertical">
+
+        <Button
+            android:id="@+id/button_immatriculation"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/default_margin"
+            android:background="@drawable/button_radius_sandlight_color"
+            android:padding="@dimen/default_margin"
+            android:text="@string/scan_immatriculation"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/default_text_size"/>
 
         <!-- BUTTON UPDATE USERNAME -->
         <Button

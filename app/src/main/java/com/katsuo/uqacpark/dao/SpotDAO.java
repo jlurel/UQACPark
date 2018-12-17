@@ -16,8 +16,8 @@ public class SpotDAO {
         return ParkingDAO.getParkingCollection().document(parking).collection(COLLECTION_NAME);
     }
 
-    public static Task<QuerySnapshot> getAllAvailableSpotsForParking(String parking) {
-        return SpotDAO.getAllSpotsForParking(parking).whereEqualTo("available", true).get();
+    public static Query getAllAvailableSpotsForParking(String parking) {
+        return SpotDAO.getAllSpotsForParking(parking).whereEqualTo("available", true);
     }
 
     public static Query getSpot(String parking, String spotId) {

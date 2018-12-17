@@ -11,7 +11,10 @@ Elle nécessite Android version 4.4 (Kit Kat) ou ultérieure.
 3. Affichage des places sur la carte
 4. Scan de la plaque d’immatriculation
 5. Réservation d'une place
-6. Système de Paiement
+6. Minuterie de stationnement
+7. Rappel 30 minutes avant le début de la réservation
+8. Système de Paiement
+9. Signaler un problème
 
 ### Ressources
 L’application utilise différentes ressources disponibles sur internet :
@@ -25,4 +28,4 @@ L’application utilise différentes ressources disponibles sur internet :
 * Skander Farhat
 
 ### Captures d'écran
-![MapsActivity](/images/mapactivity.png) ![Menu](/images/menu.png) ![Connexion](/images/signin.png) ![Profil](/images/profile.png)
+![MapsActivity](/images/mapactivity.png) ![Menu](/images/menu.png) ![Connexion](/images/signin.png) ![Profil](/images/profile.png) ![ReservationActivity](/images/reservationactivity.png)

@@ -12,10 +12,13 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,14 +44,17 @@ public class ImmatriculationActivity extends BaseActivity
         implements ActivityCompat.OnRequestPermissionsResultCallback {
 
     private static final String TAG = ImmatriculationActivity.class.getSimpleName();
-    private static final int REQUEST_IMAGE = 100;
-    private static final int STORAGE = 2;
+    private static final int CAMERA_REQUEST_CODE = 100;
+    private static final int STORAGE_REQUEST_CODE = 2;
     public static final String PLAQUE = "plaque";
 
     @BindView(R.id.image_view)
     ImageView imageView;
     @BindView(R.id.text_view_immatriculation)
     TextView textViewImmatriculation;
+    @BindView(R.id.immatriculation_layout)
+    LinearLayout layout;
+
     private static File destination;
 
     private String ANDROID_DATA_DIR;
@@ -86,13 +92,13 @@ public class ImmatriculationActivity extends BaseActivity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_IMAGE && resultCode == Activity.RESULT_OK) {
+        if (requestCode == CAMERA_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             progressDialog = ProgressDialog.show(this, "Loading", "Parsing result...", true);
             final String openAlprConfFile = ANDROID_DATA_DIR + File.separatorChar + "runtime_data" + File.separatorChar + "openalpr.conf";
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inSampleSize = 10;
 
-            // Picasso requires permission.WRITE_EXTERNAL_STORAGE
+            // Picasso requires permission.WRITE_EXTERNAL_STORAGE_REQUEST_CODE
             Log.d(TAG, destination.getAbsolutePath());
             Picasso.with(getApplicationContext()).load(destination).into(imageView);
             textViewImmatriculation.setText("Processing");
@@ -152,12 +158,37 @@ public class ImmatriculationActivity extends BaseActivity
 
 
     private void checkPermission() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+        requestCameraPermission();
+        requestStoragePermission();
+    }
+
+    private void requestCameraPermission() {
+        Log.i(TAG, "Camera permission has not been granted. Requesting permission");
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
-            // Permission to access the camera is missing.
-            PermissionUtils.requestPermission(this, REQUEST_IMAGE,
+            PermissionUtils.requestPermission(this, CAMERA_REQUEST_CODE,
                     Manifest.permission.CAMERA, true);
         } else {
+            Log.i(TAG,
+                    "Camera permissions have already been granted.");
+            takePicture();
+        }
+    }
+
+    private void requestStoragePermission() {
+        Log.i(TAG, "Storage permission has not been granted. Requesting permission");
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED
+                || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            PermissionUtils.requestPermission(this, STORAGE_REQUEST_CODE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE, true);
+            PermissionUtils.requestPermission(this, STORAGE_REQUEST_CODE,
+                    Manifest.permission.READ_EXTERNAL_STORAGE, true);
+        } else {
+            Log.i(TAG,
+                    "Storage permissions have already been granted.");
             takePicture();
         }
     }
@@ -166,21 +197,37 @@ public class ImmatriculationActivity extends BaseActivity
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         switch (requestCode) {
-            case STORAGE: {
+            case STORAGE_REQUEST_CODE: {
+                Log.i(TAG, "Received response for Storage permission request.");
                 if (PermissionUtils.isPermissionGranted(permissions, grantResults,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                    takePicture();
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        && PermissionUtils.isPermissionGranted(permissions, grantResults,
+                        Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                    Snackbar.make(layout, "La permission d'utiliser le stockage a été accordée.",
+                            Snackbar.LENGTH_SHORT)
+                            .show();
                 } else {
-                    Toast.makeText(this, "Storage permission is needed to analyse the picture.", Toast.LENGTH_LONG).show();
+                    Log.i(TAG, "Storage permission was NOT granted.");
+                    Toast.makeText(this,
+                            "Storage permission is needed to analyse the picture.",
+                            Toast.LENGTH_LONG).show();
                 }
+                break;
             }
-            case REQUEST_IMAGE: {
+            case CAMERA_REQUEST_CODE: {
+                Log.i(TAG, "Received response for Camera permission request.");
                 if (PermissionUtils.isPermissionGranted(permissions, grantResults,
                         Manifest.permission.CAMERA)) {
-                    takePicture();
+                    Snackbar.make(layout, "La permission d'utiliser l'appareil photo a été accordée.",
+                            Snackbar.LENGTH_SHORT)
+                            .show();
                 } else {
-                    Toast.makeText(this, "Camera permission is needed to take the picture.", Toast.LENGTH_LONG).show();
+                    Log.i(TAG, "CAMERA permission was NOT granted.");
+                    Toast.makeText(this,
+                            "Camera permission is needed to take the picture.",
+                            Toast.LENGTH_LONG).show();
                 }
+                break;
             }
             default:
                 finish();
@@ -215,7 +262,7 @@ public class ImmatriculationActivity extends BaseActivity
                         "com.katsuo.uqacpark.fileprovider",
                         destination);
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivityForResult(intent, REQUEST_IMAGE);
+                startActivityForResult(intent, CAMERA_REQUEST_CODE);
             }
         }
     }

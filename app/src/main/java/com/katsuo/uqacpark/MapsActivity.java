@@ -1,6 +1,9 @@
 package com.katsuo.uqacpark;
 
 import android.Manifest;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
@@ -19,6 +22,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -57,6 +61,8 @@ import com.paypal.android.sdk.payments.PayPalPayment;
 import com.paypal.android.sdk.payments.PayPalService;
 import com.paypal.android.sdk.payments.PaymentActivity;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -115,6 +121,7 @@ public class MapsActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setIcon(R.drawable.ic_parking_white);
@@ -124,6 +131,8 @@ public class MapsActivity extends AppCompatActivity
         mapFragment.getMapAsync(this);
 
         ButterKnife.bind(this);
+
+        scheduleAlarm();
 
         final BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
@@ -274,6 +283,12 @@ public class MapsActivity extends AppCompatActivity
         });
     }
 
+    @Override
+    public void onBackPressed() {
+        addMarkersToMap(mMap);
+    }
+
+
     private void enableMyLocation() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -282,9 +297,14 @@ public class MapsActivity extends AppCompatActivity
                     Manifest.permission.ACCESS_FINE_LOCATION, true);
         } else if (mMap != null) {
             // Access to the location has been granted to the app.
+            Log.i(TAG,
+                    "Location permissions have already been granted." +
+                            " Displaying Google Maps.");
             mMap.setMyLocationEnabled(true);
         }
     }
+
+
 
     @Override
     public boolean onMyLocationButtonClick() {
@@ -295,21 +315,23 @@ public class MapsActivity extends AppCompatActivity
     public void onMyLocationClick(@NonNull Location location) {
         Toast.makeText(this, "Current location:\n" + location, Toast.LENGTH_LONG).show();
     }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        if (requestCode != LOCATION_PERMISSION_REQUEST_CODE) {
-            return;
-        }
-
-        if (PermissionUtils.isPermissionGranted(permissions, grantResults,
-                Manifest.permission.ACCESS_FINE_LOCATION)) {
-            // Enable the my location layer if the permission has been granted.
-            enableMyLocation();
-        } else {
-            // Display the missing permission error dialog when the fragments resume.
-            mPermissionDenied = true;
+        switch (requestCode) {
+            case LOCATION_PERMISSION_REQUEST_CODE:
+                Log.i(TAG, "Received response for Location permission request.");
+                if (PermissionUtils.isPermissionGranted(permissions, grantResults,
+                        Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    // Enable the my location layer if the permission has been granted.
+                    enableMyLocation();
+                } else {
+                    // Display the missing permission error dialog when the fragments resume.
+                    mPermissionDenied = true;
+                }
+                break;
+            default:
+                break;
         }
     }
 
@@ -341,6 +363,7 @@ public class MapsActivity extends AppCompatActivity
                             Log.w(TAG, "Listen failed.", e);
                             return;
                         }
+                        googleMap.clear();
                         for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                             Parking parking = document.toObject(Parking.class);
                             final LatLng latLng = new LatLng(parking.getLatitude(), parking.getLongitude());
@@ -356,6 +379,8 @@ public class MapsActivity extends AppCompatActivity
                             addSpotsToMap(googleMap, parking.getParkingId());
                         }
                     }
+
+
                 });
     }
 
@@ -401,7 +426,7 @@ public class MapsActivity extends AppCompatActivity
         if (!isCurrentUserLogged()) {
             return;
         }
-        Calendar calendar = Calendar.getInstance();
+        final Calendar calendar = Calendar.getInstance();
         Date today = calendar.getTime();
         String todayToString = DateFormat.format("dd/MM/yyyy", today).toString();
         ReservationDAO.getNextReservationForUser(this.getCurrentUser().getUid(), todayToString).addSnapshotListener(
@@ -418,27 +443,39 @@ public class MapsActivity extends AppCompatActivity
                         }
                         Reservation reservation = queryDocumentSnapshots
                                 .getDocuments().get(0).toObject(Reservation.class);
-                        String spotId = reservation.getSpotId();
-                        String parkingId = "XjCkiiACt3GLnNlEjRds";
-                        SpotDAO.getSpot(parkingId, spotId).addSnapshotListener(new EventListener<QuerySnapshot>() {
-                            @Override
-                            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots,
-                                                @Nullable FirebaseFirestoreException e) {
-                                if (e != null) {
-                                    Log.w(TAG, "Listen failed.", e);
-                                    return;
-                                }
-                                if (queryDocumentSnapshots.getDocuments().size() == 0) {
-                                    return;
-                                }
-                                Spot spot = queryDocumentSnapshots
-                                        .getDocuments().get(0).toObject(Spot.class);
-                                LatLng latLng = new LatLng(spot.getLatitude(), spot.getLongitude());
-                                googleMap.addMarker(new MarkerOptions()
-                                        .position(latLng)
-                                        .title("Ma place réservée"));
+                        int currentHour = calendar.get(Calendar.HOUR_OF_DAY);
+                        int currentMinutes = calendar.get(Calendar.MINUTE);
+                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
+                        String currentTimeToString = String.format("%02d:%02d", currentHour, currentMinutes);
+                        try {
+                            Date currentTime = simpleDateFormat.parse(currentTimeToString);
+                            Date reservationEndTime = simpleDateFormat.parse(reservation.getEndHour());
+                            if (currentTime.before(reservationEndTime)) {
+                                String spotId = reservation.getSpotId();
+                                String parkingId = "XjCkiiACt3GLnNlEjRds";
+                                SpotDAO.getSpot(parkingId, spotId).addSnapshotListener(new EventListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots,
+                                                        @Nullable FirebaseFirestoreException e) {
+                                        if (e != null) {
+                                            Log.w(TAG, "Listen failed.", e);
+                                            return;
+                                        }
+                                        if (queryDocumentSnapshots.getDocuments().size() == 0) {
+                                            return;
+                                        }
+                                        Spot spot = queryDocumentSnapshots
+                                                .getDocuments().get(0).toObject(Spot.class);
+                                        LatLng latLng = new LatLng(spot.getLatitude(), spot.getLongitude());
+                                        googleMap.addMarker(new MarkerOptions()
+                                                .position(latLng)
+                                                .title("Ma place réservée"));
+                                    }
+                                });
                             }
-                        });
+                        } catch (ParseException e1) {
+                            e1.printStackTrace();
+                        }
                     }
                 }
         );
@@ -448,6 +485,8 @@ public class MapsActivity extends AppCompatActivity
     private void updateUIWhenResuming(){
         this.buttonLogin.setText(this.isCurrentUserLogged() ?
                 getString(R.string.button_login_text_logged) : getString(R.string.button_login_text_not_logged));
+        this.buttonReservations.setVisibility(this.isCurrentUserLogged() ?
+                View.VISIBLE : View.GONE);
     }
 
     @OnClick(R.id.button_login)
@@ -560,5 +599,19 @@ public class MapsActivity extends AppCompatActivity
                 Toast.makeText(getApplicationContext(), getString(R.string.error_unknown_error), Toast.LENGTH_LONG).show();
             }
         };
+    }
+
+    public void scheduleAlarm() {
+        Intent intent = new Intent(getApplicationContext(), MyAlarmReceiver.class);
+        final PendingIntent pIntent = PendingIntent.getBroadcast(this, MyAlarmReceiver.REQUEST_CODE,
+                intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        long firstMillis = System.currentTimeMillis(); // alarm is set right away
+        AlarmManager alarm = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
+
+        long interval = 1* 60 * 1000;
+        alarm.setRepeating(AlarmManager.RTC_WAKEUP, firstMillis,
+                interval, pIntent);
+        Log.i(TAG, "Schedule Alarm");
     }
 }

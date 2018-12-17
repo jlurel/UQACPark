@@ -75,6 +75,8 @@
     <string name="reservation_end_date">Heure de fin</string>
     <string name="edit_reservation_date">Entrer une heure</string>
     <string name="reservation_duration">Durée de la réservation : </string>
+    <string name="ok">OK</string>
+    <string name="cancel">Annuler</string>
 
 
 </resources>

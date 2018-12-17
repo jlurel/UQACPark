@@ -18,7 +18,7 @@
         android:text="@string/login"
         android:textColor="@android:color/white"
         android:drawableStart="@drawable/ic_account_circle_white_24dp"
-        android:background="@drawable/button_radius_primary_color"
+        android:background="@drawable/button_radius_sandlight_color"
         android:layout_marginVertical="@dimen/default_margin"
         android:layout_marginHorizontal="@dimen/default_large_margin"
         android:padding="@dimen/default_margin"/>
@@ -42,7 +42,7 @@
         android:text="@string/payment"
         android:textColor="@android:color/white"
         android:drawableStart="@drawable/ic_email_white_24dp"
-        android:background="@drawable/button_radius_primary_dark_color"
+        android:background="@drawable/button_radius_primary_color"
         android:layout_marginVertical="@dimen/default_margin"
         android:layout_marginHorizontal="@dimen/default_large_margin"
         android:padding="@dimen/default_margin"/>
