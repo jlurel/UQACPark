@@ -28,4 +28,4 @@ L’application utilise différentes ressources disponibles sur internet :
 * Skander Farhat
 
 ### Captures d'écran
-![MapsActivity](/images/mapactivity.png) ![Menu](/images/menu.png) ![Connexion](/images/signin.png) ![Profil](/images/profile.png) ![ReservationActivity](/images/reservationactivity.png)
+![MapsActivity](/images/mapactivity.png) ![Menu](/images/menu.png) ![Connexion](/images/signin.png) ![Profil](/images/profile.png) ![ReservationActivity](/images/reservationActivity.png)
